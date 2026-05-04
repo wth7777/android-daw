@@ -10,7 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Opt‑in to Node.js 24 now (pre‑empt deprecation warnings)
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
     - name: Checkout repository
@@ -31,10 +30,20 @@ jobs:
         accept-android-sdk-licenses: true
         packages: tools platform-tools platform-tools build-tools;30.0.3 platforms;android-33
 
-    # Ensure any remaining licenses are accepted non‑interactively (defensive)
     - name: Accept all SDK licenses (non‑interactive)
       run: |
         yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
+    # Debug step – list Oboe library to ensure it's present on the runner
+    - name: List Oboe directory (debug)
+      run: |
+        echo "Listing libs/Oboe content:" && ls -R libs/Oboe
+
+    # Remove deprecated package attribute from AndroidManifest
+    - name: Fix AndroidManifest namespace warning
+      run: |
+        sed -i '/package="com.example.daw"/d' app/src/main/AndroidManifest.xml
+        echo "Manifest after fix:" && cat app/src/main/AndroidManifest.xml
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug --no-daemon
