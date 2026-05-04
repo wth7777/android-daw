@@ -9,44 +9,43 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+    env:
+      # Opt‑in to Node.js 24 now (pre‑empt the deprecation warning)
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    
+
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
-    
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-      working-directory: ./android-daw
-    
+
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
-    
+
     - name: Build Debug APK
       run: ./gradlew assembleDebug --no-daemon
-      working-directory: ./android-daw
-    
+
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
         name: DAW-Debug-APK
-        path: android-daw/app/build/outputs/apk/debug/*.apk
+        path: app/build/outputs/apk/debug/*.apk
         retention-days: 30
-    
+
     - name: Build Release APK (if needed)
       if: github.event_name == 'workflow_dispatch'
       run: ./gradlew assembleRelease --no-daemon
-      working-directory: ./android-daw
-    
+
     - name: Upload Release APK (if needed)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
         name: DAW-Release-APK
-        path: android-daw/app/build/outputs/apk/release/*.apk
+        path: app/build/outputs/apk/release/*.apk
         retention-days: 30
