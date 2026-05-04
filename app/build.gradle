@@ -4,6 +4,7 @@ plugins {
 
 android {
     namespace 'com.example.daw'
+    ndkVersion "25.2.9519653"
     compileSdk 34
 
     defaultConfig {
@@ -13,6 +14,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11"
+                version "3.22.1"
             }
         }
     }
