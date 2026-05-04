@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Opt‑in to Node.js 24 now (pre‑empt the deprecation warning)
+      # Opt‑in to Node.js 24 now (pre‑empt deprecation warnings)
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
     - name: Checkout repository
@@ -27,6 +27,14 @@ jobs:
 
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
+      with:
+        accept-android-sdk-licenses: true
+        packages: tools platform-tools platform-tools build-tools;30.0.3 platforms;android-33
+
+    # Ensure any remaining licenses are accepted non‑interactively (defensive)
+    - name: Accept all SDK licenses (non‑interactive)
+      run: |
+        yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug --no-daemon
