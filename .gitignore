@@ -1,0 +1,16 @@
+# Android SDK
+android-sdk/
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration
+local.properties
+
+# JDK (we'll use GitHub Actions' JDK)
+jdk/
+
+# OS files
+.DS_Store
+Thumbs.db
