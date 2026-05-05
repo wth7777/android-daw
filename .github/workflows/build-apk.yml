@@ -20,6 +20,14 @@ jobs:
 
     - name: Verify and initialize submodules
       run: |
+        echo "=== Submodule status before init ==="
+        git submodule status || true
+        echo "=== Running submodule init ==="
+        git submodule update --init --recursive
+        echo "=== Submodule status after init ==="
+        git submodule status
+        echo "=== Listing libs directory ==="
+        ls -R libs
         echo "=== Checking submodule status ==="
         git submodule status
         git submodule update --init --recursive
@@ -80,7 +88,17 @@ jobs:
       run: ./gradlew clean --no-daemon || echo "Gradle clean failed, continuing..."
 
     - name: Build Debug APK
-      run: ./gradlew assembleDebug --no-daemon --stacktrace
+      run: ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee /tmp/gradle.log
+
+    - name: Upload build logs on failure
+      if: failure()
+      run: |
+        echo "=== Gradle log ==="
+        cat /tmp/gradle.log
+        echo "=== Ninja logs ==="
+        find /home/runner/work/android-daw/android-daw/app/.cxx -name "*.log" -exec echo "--- {} ---" \; -exec cat {} \; 2>/dev/null || true
+        echo "=== CMakeFiles ==="
+        find /home/runner/work/android-daw/android-daw/app/.cxx -name "CMakeError.log" -exec cat {} \; 2>/dev/null || true
 
     - name: Upload Debug APK
       if: always()
