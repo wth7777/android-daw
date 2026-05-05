@@ -17,12 +17,11 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Clean repository and workspace
+    - name: Clean workspace
       run: |
-        git reset --hard ${{ github.sha }}
-        git clean -fdx
-        rm -rf .gradle
+        rm -rf ~/.gradle/caches
         rm -rf app/.cxx
+        git clean -fdx
 
     - name: Copy Oboe to app native libs
       run: |
@@ -42,36 +41,82 @@ jobs:
       uses: android-actions/setup-android@v3
       with:
         accept-android-sdk-licenses: true
-        packages: tools platform-tools platform-tools build-tools;30.0.3 platforms;android-33
+        packages: >
+          platform-tools
+          build-tools;30.0.3
+          platforms;android-33
 
     - name: Setup Android NDK
       uses: nttld/setup-ndk@v1
       with:
         ndk-version: r25c
 
-    - name: Accept all SDK licenses (non‑interactive)
+    - name: Verify NDK installation
       run: |
-        yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
+        echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+        ls -la $ANDROID_NDK_ROOT
 
-    - name: Gradle clean
-      run: ./gradlew clean --no-daemon
+    - name: Accept SDK licenses
+      run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug --no-daemon
+    - name: Build Debug APK with verbose output
+      id: build
+      run: |
+        ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee gradle-build.log
+        exit_code=${PIPESTATUS[0]}
+        echo "exit_code=$exit_code" >> $GITHUB_OUTPUT
+        exit $exit_code
+
+    - name: Check APK exists
+      if: steps.build.outcome == 'success'
+      run: |
+        echo "=== Looking for APK files ==="
+        find . -name "*.apk" -type f 2>/dev/null
+        ls -la app/build/outputs/apk/debug/ 2>/dev/null || echo "No debug APK dir"
+        ls -la app/build/outputs/apk/ 2>/dev/null || echo "No APK dir at all"
+
+    - name: Upload build log on failure
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: gradle-build-log
+        path: gradle-build.log
+        retention-days: 7
+        if-no-files-found: ignore
+
+    - name: Print CMake/Ninja failure details
+      if: steps.build.outcome != 'success'
+      run: |
+        echo "=== Looking for .cxx logs ==="
+        find app/.cxx -type f -name "*.log" -exec echo "=== {} ===" \; -exec cat {} \; || true
+        echo "=== Trying ninja verbose ==="
+        NINJA_DIR=$(find app/.cxx -name "arm64-v8a" -type d |head -1)
+        if [ -n "$NINJA_DIR" ]; then
+          cd "$NINJA_DIR"
+          ninja -v daw_jni 2>&1 | tee ninja.log || true
+        fi
+      continue-on-error: true
+
+    - name: Upload Ninja log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ninja-log
+        path: ninja.log
+        retention-days: 7
+        if-no-files-found: ignore
 
     - name: Upload Debug APK
+      if: steps.build.outcome == 'success'
       uses: actions/upload-artifact@v4
       with:
         name: DAW-Debug-APK
-        path: app/build/outputs/apk/debug/*.apk
+        path: |
+          app/build/outputs/apk/debug/*.apk
+          app/build/outputs/apk/debug/
         retention-days: 30
+        if-no-files-found: warn
 
-    - name: Build Release APK (if needed)
-      if: github.event_name == 'workflow_dispatch'
-      run: ./gradlew assembleRelease --no-daemon
-
-    - name: Upload Release APK (if needed)
-      if: github.event_name == 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
-      with:
-        name: DAW-Release
+    - name: Fail if build failed
+      if: steps.build.outcome != 'success'
+      run: exit 1
