@@ -10,7 +10,7 @@
 
 class AudioCallback : public oboe::AudioStreamCallback {
  public:
-  oboe::Result onAudioReady(oboe::AudioStream *stream, void *audioData, int32_t numFrames) override {
+  oboe::DataCallbackResult onAudioReady(oboe::AudioStream *stream, void *audioData, int32_t numFrames) override {
     // Simple sine wave generation
     float *audio = static_cast<float*>(audioData);
     float freq = 440.0f;
@@ -23,7 +23,7 @@ class AudioCallback : public oboe::AudioStreamCallback {
       phase += phaseInc;
       if (phase >= 2.0 * M_PI) phase -= 2.0 * M_PI;
     }
-    return oboe::Result::OK;
+    return oboe::DataCallbackResult::Continue;
   }
 };
 
@@ -33,7 +33,7 @@ static oboe::AudioStream *stream = nullptr;
 static oboe::Result startStream() {
   oboe::AudioStreamBuilder builder;
   builder.setCallback(&callback);
-  builder.setFormat(oboe::AudioFormat::Float32);
+  builder.setFormat(oboe::AudioFormat::Float);
   builder.setSampleRate(48000);
   builder.setChannelCount(2);
   builder.setPerformanceMode(oboe::PerformanceMode::LowLatency);
