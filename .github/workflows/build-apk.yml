@@ -62,9 +62,17 @@ jobs:
     - name: Build Debug APK with verbose output
       id: build
       run: |
+        # First do a clean build
+        ./gradlew clean --no-daemon
+        # Build with explicit output
         ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee gradle-build.log
         exit_code=${PIPESTATUS[0]}
         echo "exit_code=$exit_code" >> $GITHUB_OUTPUT
+        # Always list outputs
+        echo "=== Build outputs ==="
+        find app/build -name "*.apk" -type f 2>/dev/null
+        echo "=== APK directory contents ==="
+        ls -laR app/build/outputs/apk/ 2>/dev/null || echo "No APK directory"
         exit $exit_code
 
     - name: Check APK exists
@@ -107,13 +115,13 @@ jobs:
         if-no-files-found: ignore
 
     - name: Upload Debug APK
-      if: steps.build.outcome == 'success'
       uses: actions/upload-artifact@v4
       with:
         name: DAW-Debug-APK
-        path: |
+        path: |-
           app/build/outputs/apk/debug/*.apk
-          app/build/outputs/apk/debug/
+          app/build/outputs/apk/**/*.apk
+          app/build/**/*.apk
         retention-days: 30
         if-no-files-found: warn
 
