@@ -13,12 +13,16 @@ android {
         targetSdk 34
         versionCode 2
         versionName "0.2-DAW"
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++11"
+            }
+        }
     }
 
     externalNativeBuild {
         cmake {
             path "src/main/cpp/CMakeLists.txt"
-            cppFlags "-std=c++11"
             version "3.22.1"
         }
     }
