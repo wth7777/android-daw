@@ -78,5 +78,5 @@ jobs:
         if-no-files-found: ignore
 
     - name: Fail if build failed
-      if: steps.build.outcone != 'success'
+      if: steps.build.outcome != 'success'
       run: exit 1
