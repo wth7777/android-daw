@@ -41,30 +41,25 @@ jobs:
       with:
         ndk-version: r25c
 
-    - name: Accept SDK licenses (silent)
-      run: |
-        yes 2>/dev/null | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+    - name: Accept SDK licenses
+      run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
-    - name: Verify Gradle tasks
-      run: |
-        ./gradlew tasks --all | grep -i dawdebug && echo "dawDebug task found" || echo "ERROR: dawDebug task not found"
-
-    - name: Build DAW APK
+    - name: Build Debug APK
       id: build
       run: |
         ./gradlew clean --no-daemon
-        ./gradlew assembleDawDebug --no-daemon --stacktrace 2>&1 | tee gradle-build.log
+        ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee gradle-build.log
         exit_code=${PIPESTATUS[0]}
         echo "exit_code=$exit_code" >> $GITHUB_OUTPUT
         find app/build -name "*.apk" -type f 2>/dev/null
         exit $exit_code
 
-    - name: Upload DAW APK
+    - name: Upload Debug APK
       if: steps.build.outcome == 'success'
       uses: actions/upload-artifact@v4
       with:
         name: DAW-Debug-APK
-        path: app/build/outputs/apk/**/*.apk
+        path: app/build/outputs/apk/debug/*.apk
         retention-days: 30
         if-no-files-found: error
 
