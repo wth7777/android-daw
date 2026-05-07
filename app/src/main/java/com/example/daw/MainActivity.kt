@@ -1,59 +1,33 @@
 package com.example.daw
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import com.example.daw.ui.PianoRoll
-import com.example.daw.ui.RackCard
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MaterialTheme {
-                Surface(modifier = FillMaxSize) {
-                    var showPiano by remember { mutableStateOf(true) }
-                    Column {
-                        // Top bar
-                        TopAppBar(title = { Text("DAW - Studio in your pocket") })
-                        // Toggle between Piano Roll and Rack
-                        Row(modifier = FillMaxWidth, horizontalArrangement = Arrangement.Center) {
-                            Button(onClick = { showPiano = true }) { Text("Piano Roll") }
-                            Spacer(modifier = Width(16.dp))
-                            Button(onClick = { showPiano = false }) { Text("Rack") }
-                        }
-                        // Main content
-                        if (showPiano) {
-                            PianoRollPreview()
-                        } else {
-                            RackPreview()
-                        }
-                    }
-                }
-            }
+        
+        val layout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(50, 50, 50, 50)
         }
-    }
-}
-
-@Composable
-fun PianoRollPreview() {
-    // Simple placeholder for PianoRoll; we'll wire the real view later
-    Box(modifier = FillMaxSize, contentAlignment = Alignment.Center) {
-        Text("Piano Roll - Tap to add notes")
-        // You can replace with AndroidView { PianoRoll(it) } if needed
-    }
-}
-
-@Composable
-fun RackPreview() {
-    Column(modifier = FillMaxSize.padding(16.dp)) {
-        Text("Modular Rack", style = MaterialTheme.typography.h5)
-        Spacer(modifier = Height(16.dp))
-        RackCard(title = "PolySynth", type = "Synth") { freq -> /* trigger note */ }
-        Spacer(modifier = Height(8.dp))
-        RackCard(title = "808 Drum", type = "Drum") { note -> /* trigger drum */ }
+        
+        val title = TextView(this).apply {
+            text = "DAW - Minimal Build"
+            textSize = 24f
+        }
+        
+        val status = TextView(this).apply {
+            text = "APK builds successfully. DAW UI features will be added back incrementally."
+            textSize = 14f
+        }
+        
+        layout.addView(title)
+        layout.addView(status)
+        
+        setContentView(layout)
     }
 }
