@@ -28,6 +28,10 @@ android {
         debug {
             // default debug build
         }
+        dawDebug {
+            initWith debug
+            applicationIdSuffix ".daw"
+        }
         release {
             minifyEnabled false
         }
