@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 fun RackCard(
     title: String,
     type: String = "Synth",
-    onNoteTrigger: (note: Int) -> Unit = {}
+    onNoteTrigger: (note: Int) -> Unit
 ) {
     var isPlaying by remember { mutableStateOf(false) }
 
