@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.daw.ui.PianoRoll
 import com.example.daw.ui.RackCard
-import kotlinx.compose.animation.core.AnimatableFloat
 
 class DigitalAudioWorkstation(context: Context) {
     init {
