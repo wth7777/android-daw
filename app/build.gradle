@@ -24,6 +24,10 @@ android {
         jvmTarget = '17'
     }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.6.10"
+    }
+
     buildTypes {
         debug {
             // default debug build
