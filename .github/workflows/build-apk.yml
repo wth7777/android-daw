@@ -28,10 +28,6 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           accept-android-sdk-licenses: true
-          packages: |
-            platform-tools
-            build-tools;30.0.3
-            platforms;android-33
 
       - name: Set up Android NDK
         uses: nttld/setup-ndk@v1
