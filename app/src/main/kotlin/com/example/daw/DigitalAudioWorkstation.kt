@@ -1,9 +1,6 @@
 package com.example.daw
 
 import android.content.Context
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.daw.ui.PianoRoll
-import com.example.daw.ui.RackCard
 
 class DigitalAudioWorkstation(context: Context) {
     init {

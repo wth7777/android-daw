@@ -15,7 +15,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import android.util.AttributeSet
-import android.view.MouseInfo
 import android.view.MotionEvent
 import android.view.View
 
@@ -28,8 +27,6 @@ import android.view.View
 @Composable
 fun PianoRollView(modifier: Modifier = Modifier) {
     var notes by remember { mutableStateOf(listOf<NoteData>()) }
-    var selectedOctave by remember { mutableStateOf(4) }
-    var selectedStep by remember { mutableStateOf(0) }
     
     val stepWidth = 60f
     val keyHeight = 40f
@@ -51,12 +48,6 @@ fun PianoRollView(modifier: Modifier = Modifier) {
                     override fun onDraw(canvas: Canvas) {
                         super.onDraw(canvas)
                         
-                        val paint = Paint().apply {
-                            color = Color.WHITE
-                            textSize = 24f
-                        }
-                        
-                        // Draw grid
                         val gridPaint = Paint().apply {
                             color = Color.Gray
                             strokeWidth = 1f
