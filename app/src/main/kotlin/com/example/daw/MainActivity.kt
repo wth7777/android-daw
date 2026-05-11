@@ -17,23 +17,20 @@ class MainActivity : ComponentActivity() {
         
         setContent {
             DAWTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
-                    ) {
-                        // Top App Bar
+                Scaffold(
+                    topBar = {
                         TopAppBar(
                             title = { Text("DAW - Digital Audio Workstation") },
                             backgroundColor = MaterialTheme.colors.primary
                         )
-                        
-                        Spacer(modifier = Modifier.height(16.dp))
-                        
+                    }
+                ) { padding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding)
+                            .padding(16.dp)
+                    ) {
                         // Rack Cards (synth modules)
                         Text("Modules", style = MaterialTheme.typography.h6)
                         Spacer(modifier = Modifier.height(8.dp))
@@ -47,13 +44,13 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.weight(1f)
                             )
                             RackCard(
-                                title = "Filter",
+                                title = "Filter", 
                                 type = "lowpass",
                                 modifier = Modifier.weight(1f)
                             )
                             RackCard(
                                 title = "Amp",
-                                type = "envelope",
+                                type = "envelope", 
                                 modifier = Modifier.weight(1f)
                             )
                         }

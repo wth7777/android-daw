@@ -16,14 +16,13 @@ import androidx.compose.ui.unit.dp
 fun RackCard(
     title: String,
     type: String,
-    modifier: Modifier = Modifier,
-    onNoteTrigger: (note: Int) -> Unit = {}
+    modifier: Modifier = Modifier
 ) {
     var isActive by remember { mutableStateOf(false) }
     
     Card(
         modifier = modifier
-            .height(120.dp)
+            .height(100.dp)
             .clickable { isActive = !isActive },
         backgroundColor = if (isActive) Color(0xFF2D2D2D) else Color(0xFF1E1E1E),
         border = if (isActive) {
@@ -38,7 +37,6 @@ fun RackCard(
                 .padding(8.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Title
             Text(
                 text = title,
                 style = MaterialTheme.typography.subtitle1,
@@ -46,14 +44,12 @@ fun RackCard(
                 color = Color.White
             )
             
-            // Type
             Text(
                 text = type,
                 style = MaterialTheme.typography.caption,
                 color = Color.Gray
             )
             
-            // Status indicator
             Box(
                 modifier = Modifier
                     .size(8.dp)
