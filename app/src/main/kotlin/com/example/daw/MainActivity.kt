@@ -1,27 +1,18 @@
 package com.example.daw
 
 import android.os.Bundle
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.ui.Modifier
-import com.example.daw.ui.DAWTheme
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : androidx.activity.ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        setContent {
-            DAWTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Text("DAW App - Build Success!")
-                }
-            }
-        }
+        val textView = TextView(this)
+        textView.text = "DAW App - Basic Build Success!"
+        textView.textSize = 24f
+        textView.setPadding(50, 50, 50, 50)
+        
+        setContentView(textView)
     }
 }
