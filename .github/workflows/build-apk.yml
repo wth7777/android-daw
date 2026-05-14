@@ -37,9 +37,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Remove stale Gradle caches
+      - name: Remove stale Gradle caches & disable AAPT2 daemon
         run: |
           rm -rf ~/.gradle/caches/transforms-* && rm -rf ~/.gradle/caches/module-metadata-*
+          echo 'android.enableAapt2=false' >> gradle.properties
+          cat gradle.properties
 
       - name: Build Debug APK
         id: build
