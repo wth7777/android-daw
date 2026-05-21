@@ -13,6 +13,13 @@ android {
     namespace 'com.example.daw'
     compileSdk 34
 
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'src/main/kotlin']
+            kotlin.srcDirs = ['src/main/kotlin', 'src/main/java']
+        }
+    }
+
     defaultConfig {
         applicationId "com.example.daw"
         minSdk 24

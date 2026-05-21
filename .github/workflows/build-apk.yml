@@ -49,15 +49,21 @@ jobs:
 
     - name: Find APK
       run: |
+        echo "=== Looking for APK files ==="
         find . -name "*.apk" -type f 2>/dev/null
-        ls -la app/build/outputs/apk/debug/ 2>/dev/null || echo "No debug dir"
+        find . -name "*.apk" -type f -exec ls -la {} \;
+        ls -la app/build/outputs/apk/ 2>/dev/null || echo "No apk dir"
+        ls -la app/build/outputs/ 2>/dev/null || echo "No outputs dir"
 
     - name: Upload APK
       if: success()
       uses: actions/upload-artifact@v4
       with:
         name: DAW-debug-apk
-        path: app/build/outputs/apk/debug/*.apk
+        path: |
+          app/build/outputs/apk/debug/*.apk
+          app/build/outputs/apk/*/*.apk
+          app/build/outputs/**/debug/*.apk
         retention-days: 7
 
     - name: Upload build log
