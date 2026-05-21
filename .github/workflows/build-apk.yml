@@ -42,18 +42,45 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Show project structure
+      run: |
+        echo "=== Project structure ==="
+        ls -la
+        echo ""
+        echo "=== App source dirs ==="
+        ls -la app/src/main/
+        echo ""
+        echo "=== Kotlin sources ==="
+        find app/src/main/kotlin -name "*.kt" 2>/dev/null || echo "No kotlin dir"
+        echo ""
+        echo "=== Java sources ==="
+        find app/src/main/java -name "*.java" 2>/dev/null || echo "No java dir"
+
     - name: Build Debug APK
       run: |
+        echo "=== Running Gradle build ==="
         ./gradlew clean assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
-        echo "Exit code: $?"
+        BUILD_EXIT=${PIPESTATUS[0]}
+        echo ""
+        echo "=== Gradle exit code: $BUILD_EXIT ==="
+        
+        # Always show last 50 lines of build log
+        echo ""
+        echo "=== Last 50 lines of build log ==="
+        tail -50 build.log
+        
+        if [ $BUILD_EXIT -ne 0 ]; then
+          echo "BUILD FAILED with exit code $BUILD_EXIT"
+          exit 1
+        fi
 
-    - name: Find APK
+    - name: Find APK files
       run: |
         echo "=== Looking for APK files ==="
         find . -name "*.apk" -type f 2>/dev/null
-        find . -name "*.apk" -type f -exec ls -la {} \;
-        ls -la app/build/outputs/apk/ 2>/dev/null || echo "No apk dir"
-        ls -la app/build/outputs/ 2>/dev/null || echo "No outputs dir"
+        echo ""
+        echo "=== Checking app/build/outputs ==="
+        ls -laR app/build/outputs/ 2>/dev/null || echo "No outputs directory!"
 
     - name: Upload APK
       if: success()
@@ -63,8 +90,9 @@ jobs:
         path: |
           app/build/outputs/apk/debug/*.apk
           app/build/outputs/apk/*/*.apk
-          app/build/outputs/**/debug/*.apk
+          app/build/outputs/**/*.apk
         retention-days: 7
+        if-no-files-found: error
 
     - name: Upload build log
       if: always()
