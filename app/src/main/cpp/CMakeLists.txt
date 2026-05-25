@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Oboe setup - relative path from app/src/main/cpp to libs/Oboe
-set(OBOE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../../libs/Oboe")
+# From app/src/main/cpp/ go up 3 levels to project root, then into libs/Oboe
+set(OBOE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/Oboe")
 
 # Print the path so we can debug
 message(STATUS "=== Oboe directory set to: ${OBOE_DIR} ===")

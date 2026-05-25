@@ -2,7 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ master, main ]
   pull_request:
   workflow_dispatch:
 
@@ -42,46 +42,19 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Show project structure
-      run: |
-        echo "=== Project structure ==="
-        ls -la
-        echo ""
-        echo "=== App source dirs ==="
-        ls -la app/src/main/
-        echo ""
-        echo "=== Kotlin sources ==="
-        find app/src/main/kotlin -name "*.kt" 2>/dev/null || echo "No kotlin dir"
-        echo ""
-        echo "=== Java sources ==="
-        find app/src/main/java -name "*.java" 2>/dev/null || echo "No java dir"
-
     - name: Build Debug APK
       run: |
-        echo "=== Running Gradle build ==="
         ./gradlew clean assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
-        BUILD_EXIT=${PIPESTATUS[0]}
-        echo ""
-        echo "=== Gradle exit code: $BUILD_EXIT ==="
-        
-        # Always show last 50 lines of build log
-        echo ""
-        echo "=== Last 50 lines of build log ==="
-        tail -50 build.log
-        
-        if [ $BUILD_EXIT -ne 0 ]; then
-          echo "BUILD FAILED with exit code $BUILD_EXIT"
-          exit 1
-        fi
+        echo "Exit code: $?"
 
-    - name: Find APK files
+    - name: Find APK
       run: |
         echo "=== Looking for APK files ==="
         find . -name "*.apk" -type f 2>/dev/null
         echo ""
-        echo "=== Checking app/build/outputs ==="
-        ls -laR app/build/outputs/ 2>/dev/null || echo "No outputs directory!"
-
+        echo "=== Checking app/build/outputs/apk ==="
+        ls -laR app/build/outputs/apk/ 2>/dev/null || echo "No outputs directory!"
+        
     - name: Upload APK
       if: success()
       uses: actions/upload-artifact@v4
