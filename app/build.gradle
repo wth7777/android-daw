@@ -12,7 +12,7 @@ android {
     buildToolsVersion '34.0.0'
     namespace 'com.example.daw'
     compileSdk 34
-    ndkVersion "25.2.9519653"
+    ndkVersion "27d"
 
     defaultConfig {
         applicationId "com.example.daw"
