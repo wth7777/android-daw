@@ -12,14 +12,13 @@ android {
     buildToolsVersion '34.0.0'
     namespace 'com.example.daw'
     compileSdk 34
-    ndkVersion "27d"
 
     defaultConfig {
         applicationId "com.example.daw"
         minSdk 24
         targetSdk 34
-        versionCode 4
-        versionName "0.4-minimal"
+        versionCode 5
+        versionName "0.5-basic"
     }
 
     compileOptions {
@@ -35,34 +34,13 @@ android {
         debug {}
         release {}
     }
-
-    buildFeatures {
-        compose true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.5.4'
-    }
+    
+    // Disable native build for now - can re-enable after APK works
+    // externalNativeBuild.cmake.enabled = false
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.10.0'
-    
-    // Compose BOM
-    implementation platform('androidx.compose:compose-bom:2023.10.01')
-    implementation 'androidx.compose.ui:ui'
-    implementation 'androidx.compose.ui:ui-graphics'
-    implementation 'androidx.compose.ui:ui-tooling-preview'
-    implementation 'androidx.compose.material3:material3'
-    implementation 'androidx.compose.foundation:foundation'
-    implementation 'androidx.compose.foundation:foundation-layout'
-    
-    // Activity compose
-    implementation 'androidx.activity:activity-compose:1.8.2'
-
-    // KTX extensions
     implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'
 }
