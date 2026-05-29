@@ -9,7 +9,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         
         val textView = TextView(this)
-        textView.text = "DAW App - Basic Build Success!"
+        textView.text = "DAW App - Basic APK Ready!"
         textView.textSize = 24f
         textView.setPadding(50, 50, 50, 50)
         

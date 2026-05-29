@@ -3,13 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
-repositories {
-    google()
-    mavenCentral()
-}
-
 android {
-    buildToolsVersion '34.0.0'
     namespace 'com.example.daw'
     compileSdk 34
 
@@ -17,8 +11,8 @@ android {
         applicationId "com.example.daw"
         minSdk 24
         targetSdk 34
-        versionCode 5
-        versionName "0.5-basic"
+        versionCode 6
+        versionName "0.6-basic"
     }
 
     compileOptions {
@@ -29,18 +23,9 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-
-    buildTypes {
-        debug {}
-        release {}
-    }
-    
-    // Disable native build for now - can re-enable after APK works
-    // externalNativeBuild.cmake.enabled = false
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
-    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'com.google.android.material:material:1.11.0'
 }

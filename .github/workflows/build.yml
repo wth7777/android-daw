@@ -2,86 +2,44 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ master, main ]
   pull_request:
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 30
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Clean workspace
-      run: |
-        rm -rf ~/.gradle/caches
-        rm -rf app/.cxx
-        git clean -fdx
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      - name: Cache gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches/modules-*
+            ~/.gradle/caches/jars-*
+          key: gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
-      with:
-        accept-android-sdk-licenses: true
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-    - name: Install required SDK components
-      run: |
-        yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT \
-          "platform-tools" \
-          "platforms;android-34" \
-          "build-tools;34.0.0" || true
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
 
-    - name: Setup Android NDK
-      uses: nttld/setup-ndk@v1
-      with:
-        ndk-version: r25c
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
-    - name: Build Debug APK
-      run: |
-        ./gradlew clean assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
-        echo "BUILD_EXIT=$?" >> $GITHUB_ENV
-
-    - name: Find APK files
-      run: |
-        echo "=== Looking for APK files ==="
-        find . -name "*.apk" -type f
-        ls -la app/build/outputs/apk/debug/ 2>/dev/null || true
-        ls -la app/build/outputs/apk/ 2>/dev/null || true
-
-    - name: Upload APK
-      run: |
-        echo "Looking for APK in app/build/outputs/apk/debug..."
-        if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
-          echo "Found APK!"
-          ls -la app/build/outputs/apk/debug/
-        else
-          echo "APK not found in expected location!"
-          find . -name "*.apk" -type f || echo "No APK files found at all"
-        fi
-
-    - name: Upload APK artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: DAW-debug-apk
-        path: app/build/outputs/apk/debug/
-        retention-days: 30
-
-    - name: Upload build log
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-log
-        path: build.log
-        retention-days: 7
+      - name: Upload build outputs (APKs)
+        uses: actions/upload-artifact@v4
+        with:
+          name: DAW-debug-apk
+          path: app/build/outputs/apk/debug/
+          retention-days: 30
