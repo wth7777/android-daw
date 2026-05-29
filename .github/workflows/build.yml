@@ -21,16 +21,6 @@ jobs:
           java-version: 17
           distribution: 'zulu'
 
-      - name: Cache gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches/modules-*
-            ~/.gradle/caches/jars-*
-          key: gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
