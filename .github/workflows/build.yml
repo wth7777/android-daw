@@ -34,15 +34,21 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Clean
+        run: ./gradlew clean
+
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace 2>&1 | tee build.log
 
-      - name: Show APK location
+      - name: List output files
         run: |
+          echo "=== Contents of app/build/outputs ==="
+          find app/build/outputs -type f
           echo "=== APK files ==="
           find . -name "*.apk" -type f
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: DAW-debug-apk
